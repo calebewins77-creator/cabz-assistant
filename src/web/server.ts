@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import rateLimit from "express-rate-limit";
 import { Client } from "discord.js";
-import { sessionMiddleware } from "./session";
+import { getSessionMiddleware } from "./session";
 import { authRouter } from "./routes/auth";
 import { buildDashboardRouter } from "./routes/dashboard";
 import { logger } from "../logger";
@@ -14,7 +14,7 @@ export function createWebServer(client: Client) {
   app.set("views", path.join(__dirname, "..", "..", "views"));
   app.use(express.static(path.join(__dirname, "..", "..", "public")));
   app.use(express.urlencoded({ extended: true }));
-  app.use(sessionMiddleware);
+  app.use(getSessionMiddleware());
 
   app.use(
     rateLimit({
