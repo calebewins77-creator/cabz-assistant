@@ -18,7 +18,7 @@ export function createBotClient(): Client {
 
   client.on("error", (err) => logger.error({ err }, "Discord client error"));
   client.on("shardError", (err) => logger.error({ err }, "Discord shard error"));
-  client.on("debug", (info) => logger.info({ discordDebug: info }, "discord.js debug"));
+  client.on("debug", (info) => logger.debug({ discordDebug: info }, "discord.js debug"));
   client.on("warn", (info) => logger.warn({ discordWarn: info }, "discord.js warning"));
 
   return client;

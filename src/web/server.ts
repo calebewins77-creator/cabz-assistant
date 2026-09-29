@@ -29,28 +29,6 @@ export function createWebServer(client: Client) {
     res.json({ status: "ok", discordReady: client.isReady() });
   });
 
-  // Temporary diagnostic route to isolate a network-level connectivity issue
-  // to Discord's API from this host. Remove once resolved.
-  app.get("/debug/net", async (_req, res) => {
-    const targets = [
-      "https://discord.com/api/v10/gateway",
-      "https://dns.google/resolve?name=discord.com&type=A",
-    ];
-    const results: Record<string, unknown> = {};
-    for (const url of targets) {
-      const start = Date.now();
-      try {
-        const controller = new AbortController();
-        const t = setTimeout(() => controller.abort(), 8000);
-        const r = await fetch(url, { signal: controller.signal });
-        clearTimeout(t);
-        results[url] = { ok: true, status: r.status, ms: Date.now() - start, body: await r.text() };
-      } catch (err: any) {
-        results[url] = { ok: false, ms: Date.now() - start, error: err?.message ?? String(err) };
-      }
-    }
-    res.json(results);
-  });
 
   app.get("/", (req, res) => {
     if (req.session.user) return res.redirect("/dashboard");
