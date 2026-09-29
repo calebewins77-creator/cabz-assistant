@@ -1,0 +1,17 @@
+<%- include('partials/head', { title: guild.name + ' ' + section }) %>
+<div class="shell">
+  <%- include('partials/sidebar', { guild: guild, active: active }) %>
+  <div>
+    <%- include('partials/topbar', { user: user }) %>
+    <div class="main">
+      <div class="page-header">
+        <div><h1><%= section %></h1></div>
+      </div>
+      <div class="card empty-state">
+        <p><%= blurb %></p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

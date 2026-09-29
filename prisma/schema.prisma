@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProofStatus {
+  PENDING
+  PROCESSING
+  APPROVED
+  REJECTED
+}
+
+model GuildConfig {
+  guildId        String   @id
+  prefix         String   @default("!")
+  proofChannelId String?
+  verifiedRoleId String?
+  staffRoleIds   String[] @default([])
+  modLogChannelId String?
+  welcomeChannelId String?
+  welcomeMessage  String?
+  goodbyeChannelId String?
+  goodbyeMessage  String?
+  autoRoleIds     String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ProofSubmission {
+  id              String      @id @default(cuid())
+  guildId         String
+  channelId       String
+  submitterId     String
+  originalMessageId String    @unique
+  reviewMessageId String?     @unique
+  attachmentUrl   String?
+  contentText     String?
+  status          ProofStatus @default(PENDING)
+  decidedBy       String?
+  decidedAt       DateTime?
+  originalDeleted Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+
+  @@index([guildId, status])
+}
+
+model RoleGrant {
+  id         String    @id @default(cuid())
+  guildId    String
+  userId     String
+  roleId     String
+  grantedBy  String
+  reason     String
+  expiresAt  DateTime?
+  revoked    Boolean   @default(false)
+  removedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([guildId, userId, roleId])
+  @@index([expiresAt])
+}
+
+model ModerationLog {
+  id           String   @id @default(cuid())
+  guildId      String
+  action       String
+  targetUserId String?
+  moderatorId  String
+  reason       String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([guildId, createdAt])
+  @@index([guildId, action])
+  @@index([guildId, targetUserId])
+}
+
+model TempBan {
+  id        String   @id @default(cuid())
+  guildId   String
+  userId    String
+  expiresAt DateTime
+  liftedAt  DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}

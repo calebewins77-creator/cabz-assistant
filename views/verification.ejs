@@ -1,0 +1,52 @@
+<%- include('partials/head', { title: guild.name + ' Verification' }) %>
+<div class="shell">
+  <%- include('partials/sidebar', { guild: guild, active: 'verification' }) %>
+  <div>
+    <%- include('partials/topbar', { user: user }) %>
+    <div class="main">
+      <div class="page-header">
+        <div><h1>Creator Code Verification</h1><p>Configure the proof channel and role, and review submissions.</p></div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Configuration</h3>
+        <form class="settings-form" method="post" action="/dashboard/<%= guild.id %>/verification">
+          <div>
+            <label>Proof submission channel ID</label>
+            <input type="text" name="proofChannelId" value="<%= cfg.proofChannelId || '' %>" placeholder="1554078641984638977" />
+            <div class="field-hint">Messages and screenshots posted here are auto-detected.</div>
+          </div>
+          <div>
+            <label>Verification role ID</label>
+            <input type="text" name="verifiedRoleId" value="<%= cfg.verifiedRoleId || '' %>" placeholder="1554350014497558529" />
+            <div class="field-hint">Granted automatically when a submission is approved.</div>
+          </div>
+          <div><button class="btn btn-primary" type="submit">Save configuration</button></div>
+        </form>
+      </div>
+
+      <h3 style="color:var(--text-dim); text-transform:uppercase; font-size:0.8rem; letter-spacing:0.05em;">Recent submissions</h3>
+      <% if (submissions.length === 0) { %>
+        <div class="empty-state">No submissions yet.</div>
+      <% } else { %>
+        <% submissions.forEach(function(s) { %>
+          <div class="submission-card">
+            <% if (s.attachmentUrl) { %><img src="<%= s.attachmentUrl %>" alt="" /><% } %>
+            <div class="submission-meta">
+              <div><strong>&lt;@<%= s.submitterId %>&gt;</strong>
+                <span class="badge badge-<%= s.status.toLowerCase() %>" style="margin-left:8px;"><%= s.status %></span>
+              </div>
+              <% if (s.contentText) { %><div class="text"><%= s.contentText %></div><% } %>
+              <div class="field-hint" style="margin-top:8px;">
+                Submitted <%= s.createdAt.toLocaleString() %>
+                <% if (s.decidedBy) { %> &middot; decided by &lt;@<%= s.decidedBy %>&gt; at <%= s.decidedAt.toLocaleString() %><% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</div>
+</body>
+</html>

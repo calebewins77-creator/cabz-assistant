@@ -1,0 +1,34 @@
+<%- include('partials/head', { title: guild.name + ' Settings' }) %>
+<div class="shell">
+  <%- include('partials/sidebar', { guild: guild, active: 'settings' }) %>
+  <div>
+    <%- include('partials/topbar', { user: user }) %>
+    <div class="main">
+      <div class="page-header">
+        <div><h1>Bot Settings</h1><p>Prefix, staff access and moderation logging.</p></div>
+      </div>
+
+      <div class="card">
+        <form class="settings-form" method="post" action="/dashboard/<%= guild.id %>/settings">
+          <div>
+            <label>Command prefix</label>
+            <input type="text" name="prefix" value="<%= cfg.prefix %>" maxlength="5" />
+            <div class="field-hint">Applies to text commands like <code><%= cfg.prefix %>ban</code>. Does not affect the special <code>#codep</code> command, which always works.</div>
+          </div>
+          <div>
+            <label>Staff role IDs</label>
+            <input type="text" name="staffRoleIds" value="<%= cfg.staffRoleIds.join(', ') %>" placeholder="111111111111111111, 222222222222222222" />
+            <div class="field-hint">Comma-separated Discord role IDs allowed to approve/reject proofs and run moderation commands. Server Administrators and Manage Roles holders always have access.</div>
+          </div>
+          <div>
+            <label>Moderation log channel ID (optional)</label>
+            <input type="text" name="modLogChannelId" value="<%= cfg.modLogChannelId || '' %>" placeholder="Channel ID" />
+          </div>
+          <div><button class="btn btn-primary" type="submit">Save settings</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

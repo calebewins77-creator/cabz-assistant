@@ -1,0 +1,41 @@
+<%- include('partials/head', { title: guild.name + ' Overview' }) %>
+<div class="shell">
+  <%- include('partials/sidebar', { guild: guild, active: 'overview' }) %>
+  <div>
+    <%- include('partials/topbar', { user: user }) %>
+    <div class="main">
+      <div class="page-header">
+        <div><h1>Overview</h1><p><%= guild.name %></p></div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card"><h3>Members</h3><div class="stat"><%= memberCount %></div></div>
+        <div class="card"><h3>Bot status</h3><div class="stat" style="color:var(--success);"><%= botStatus %></div></div>
+        <div class="card"><h3>Pending proofs</h3><div class="stat"><%= pendingCount %></div></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h3>Recent moderation actions</h3>
+        <% if (recentActions.length === 0) { %>
+          <p style="color:var(--text-dim); margin-top:12px;">No moderation activity yet.</p>
+        <% } else { %>
+          <table style="margin-top:12px;">
+            <thead><tr><th>Action</th><th>Target</th><th>Moderator</th><th>When</th></tr></thead>
+            <tbody>
+              <% recentActions.forEach(function(a) { %>
+                <tr>
+                  <td><%= a.action %></td>
+                  <td><%= a.targetUserId || '—' %></td>
+                  <td><%= a.moderatorId %></td>
+                  <td><%= a.createdAt.toLocaleString() %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<div class="topbar">
+  <% if (user.avatar) { %>
+    <img class="avatar" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64" alt="" />
+  <% } %>
+  <span style="color: var(--text-dim); font-size: 0.9rem;"><%= user.global_name || user.username %></span>
+  <form method="post" action="/auth/logout" style="margin:0;">
+    <button class="btn btn-sm" type="submit">Log out</button>
+  </form>
+</div>

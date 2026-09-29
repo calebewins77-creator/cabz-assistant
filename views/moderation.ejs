@@ -1,0 +1,39 @@
+<%- include('partials/head', { title: guild.name + ' Moderation' }) %>
+<div class="shell">
+  <%- include('partials/sidebar', { guild: guild, active: 'moderation' }) %>
+  <div>
+    <%- include('partials/topbar', { user: user }) %>
+    <div class="main">
+      <div class="page-header">
+        <div><h1>Moderation logs</h1><p>Searchable history of bans, kicks, mutes, warnings and role changes.</p></div>
+      </div>
+
+      <form method="get" style="margin-bottom:20px; max-width:360px;">
+        <input type="search" name="q" value="<%= search %>" placeholder="Search by user ID, moderator ID or action" />
+      </form>
+
+      <div class="card">
+        <% if (logs.length === 0) { %>
+          <p style="color:var(--text-dim);">No matching log entries.</p>
+        <% } else { %>
+          <table>
+            <thead><tr><th>Action</th><th>Target</th><th>Moderator</th><th>Reason</th><th>When</th></tr></thead>
+            <tbody>
+              <% logs.forEach(function(l) { %>
+                <tr>
+                  <td><%= l.action %></td>
+                  <td><%= l.targetUserId || '—' %></td>
+                  <td><%= l.moderatorId %></td>
+                  <td><%= l.reason || '—' %></td>
+                  <td><%= l.createdAt.toLocaleString() %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

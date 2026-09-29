@@ -1,0 +1,22 @@
+<div class="sidebar">
+  <div class="brand"><span class="dot"></span> CABZ Assistant</div>
+  <div class="guild-name"><%= guild.name %></div>
+
+  <a class="nav-link <%= active === 'overview' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>">Overview</a>
+  <a class="nav-link <%= active === 'verification' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/verification">Creator Code Verification</a>
+  <a class="nav-link <%= active === 'moderation' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/moderation">Moderation</a>
+  <a class="nav-link <%= active === 'tickets' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/tickets">Tickets</a>
+  <a class="nav-link <%= active === 'lfg' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/lfg">LFG</a>
+  <a class="nav-link <%= active === 'events' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/events">Events</a>
+  <a class="nav-link <%= active === 'leveling' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/leveling">Leveling</a>
+  <a class="nav-link <%= active === 'commands' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/commands">Custom Commands</a>
+  <a class="nav-link <%= active === 'welcome' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/welcome">Welcome & Goodbye</a>
+
+  <div class="nav-section">Configuration</div>
+  <a class="nav-link <%= active === 'settings' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/settings">Bot Settings</a>
+  <a class="nav-link <%= active === 'embeds' ? 'active' : '' %>" href="/dashboard/<%= guild.id %>/embeds">Embed Builder</a>
+
+  <div class="sidebar-footer">
+    <a class="nav-link" href="/dashboard">&larr; All servers</a>
+  </div>
+</div>
