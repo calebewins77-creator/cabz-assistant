@@ -10,6 +10,11 @@ import { logger } from "../logger";
 export function createWebServer(client: Client) {
   const app = express();
 
+  // Railway (like Render/Heroku) terminates TLS and proxies requests, setting
+  // X-Forwarded-* headers. Without this, req.secure/req.ip are wrong and
+  // express-rate-limit throws ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+  app.set("trust proxy", 1);
+
   app.set("view engine", "ejs");
   app.set("views", path.join(__dirname, "..", "..", "views"));
   app.use(express.static(path.join(__dirname, "..", "..", "public")));
