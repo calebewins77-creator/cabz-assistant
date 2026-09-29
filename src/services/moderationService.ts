@@ -175,15 +175,27 @@ export async function runCodep(opts: {
     throw new ModerationError("No verified role is configured for this server.");
   }
 
-  await grantRole({
-    client: opts.client,
-    guildId: opts.guildId,
-    userId: opts.targetId,
-    roleId: cfg.verifiedRoleId,
-    grantedBy: opts.moderatorId,
-    reason: "codep",
-    expiresAt: parsed.permanent ? null : new Date(Date.now() + parsed.ms!),
-  });
+  try {
+    await grantRole({
+      client: opts.client,
+      guildId: opts.guildId,
+      userId: opts.targetId,
+      roleId: cfg.verifiedRoleId,
+      grantedBy: opts.moderatorId,
+      reason: "codep",
+      expiresAt: parsed.permanent ? null : new Date(Date.now() + parsed.ms!),
+    });
+  } catch (err: any) {
+    if (err?.code === 10011) {
+      throw new ModerationError(
+        "The configured verification role no longer exists in this server. Set a valid role in the dashboard's Creator Code Verification settings."
+      );
+    }
+    if (err?.code === 50013) {
+      throw new ModerationError("I lack permission to assign that role (check role hierarchy).");
+    }
+    throw err;
+  }
 
   await logModerationAction({
     guildId: opts.guildId,

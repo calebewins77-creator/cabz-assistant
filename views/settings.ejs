@@ -18,7 +18,7 @@
           <div>
             <label>Staff role IDs</label>
             <input type="text" name="staffRoleIds" value="<%= cfg.staffRoleIds.join(', ') %>" placeholder="111111111111111111, 222222222222222222" />
-            <div class="field-hint">Comma-separated Discord role IDs allowed to approve/reject proofs and run moderation commands. Server Administrators and Manage Roles holders always have access.</div>
+            <div class="field-hint">Comma-separated Discord role IDs allowed to approve/reject proofs and run moderation commands. Only these roles (and the server owner) have access &mdash; Administrator/Manage Roles permission alone is not enough.</div>
           </div>
           <div>
             <label>Moderation log channel ID (optional)</label>

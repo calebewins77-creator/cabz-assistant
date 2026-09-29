@@ -1,18 +1,15 @@
-import { GuildMember, PermissionsBitField } from "discord.js";
+import { GuildMember } from "discord.js";
 import { getGuildConfig } from "../db/guildConfig";
 
 /**
- * Staff = configured staff role IDs, OR native Administrator/Manage Roles permission.
- * The permission fallback ensures server owners/admins are never locked out before
- * they've configured STAFF_ROLE_IDS on the dashboard.
+ * Staff = holds one of the configured staff roles, or is the server owner.
+ * The owner check is a narrow safety net so a misconfigured STAFF_ROLE_IDS
+ * can never lock the owner out of their own server. Administrator/Manage
+ * Roles permission alone is deliberately NOT sufficient — only the
+ * configured role (or owner) counts, so this is enforced strictly.
  */
 export async function isStaff(member: GuildMember): Promise<boolean> {
-  if (
-    member.permissions.has(PermissionsBitField.Flags.Administrator) ||
-    member.permissions.has(PermissionsBitField.Flags.ManageRoles)
-  ) {
-    return true;
-  }
+  if (member.id === member.guild.ownerId) return true;
 
   const cfg = await getGuildConfig(member.guild.id);
   if (cfg.staffRoleIds.length === 0) return false;

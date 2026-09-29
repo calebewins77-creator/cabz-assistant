@@ -12,6 +12,14 @@ import { proofApprovedEmbed, proofPendingEmbed, proofRejectedEmbed } from "../di
 import { logModerationAction } from "./moderationLog";
 import { logger } from "../logger";
 
+function describeRoleAssignError(err: any): string {
+  if (err?.code === 50013) return "I lack permission to assign that role (check role hierarchy).";
+  if (err?.code === 10011) {
+    return "The configured verification role no longer exists in this server. Set a valid role in the dashboard's Creator Code Verification settings.";
+  }
+  return "Unexpected error while approving.";
+}
+
 function buildButtons(submissionId: string, disabled = false) {
   return new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
@@ -145,7 +153,7 @@ export async function approveProof(opts: {
     return {
       ok: false,
       reason: "role_error",
-      message: err?.code === 50013 ? "I lack permission to assign that role (check role hierarchy)." : "Unexpected error while approving.",
+      message: describeRoleAssignError(err),
     };
   }
 }
