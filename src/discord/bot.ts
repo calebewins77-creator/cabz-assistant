@@ -6,7 +6,7 @@ import { registerInteractionCreate } from "./events/interactionCreate";
 import { config } from "../config";
 import { logger } from "../logger";
 
-const LOGIN_TIMEOUT_MS = 30_000;
+const LOGIN_TIMEOUT_MS = 60_000;
 
 /** Synchronous setup only — safe to call before the web server starts listening. */
 export function createBotClient(): Client {
@@ -18,6 +18,8 @@ export function createBotClient(): Client {
 
   client.on("error", (err) => logger.error({ err }, "Discord client error"));
   client.on("shardError", (err) => logger.error({ err }, "Discord shard error"));
+  client.on("debug", (info) => logger.info({ discordDebug: info }, "discord.js debug"));
+  client.on("warn", (info) => logger.warn({ discordWarn: info }, "discord.js warning"));
 
   return client;
 }
