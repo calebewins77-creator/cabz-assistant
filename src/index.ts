@@ -1,7 +1,13 @@
+import dns from "dns";
 import { createBotClient, loginBot } from "./discord/bot";
 import { createWebServer } from "./web/server";
 import { config } from "./config";
 import { logger } from "./logger";
+
+// Some hosts advertise IPv6 routes that are actually unreachable, which makes
+// outbound HTTPS/WSS connections (Discord REST + gateway) hang instead of
+// failing over to IPv4. Prefer IPv4 results to avoid that class of hang.
+dns.setDefaultResultOrder("ipv4first");
 
 async function main() {
   const client = createBotClient();
