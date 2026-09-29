@@ -67,12 +67,27 @@ export interface DiscordUserGuild {
   permissions: string;
 }
 
+export class DiscordAPIRequestError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+  }
+}
+
 export async function fetchDiscordUserGuilds(accessToken: string): Promise<DiscordUserGuild[]> {
-  const res = await fetch(`${API_BASE}/users/@me/guilds`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch user guilds: ${res.status}`);
-  return res.json() as Promise<DiscordUserGuild[]>;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(`${API_BASE}/users/@me/guilds`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (res.ok) return res.json() as Promise<DiscordUserGuild[]>;
+
+    if (res.status === 429 && attempt === 0) {
+      const retryAfterSec = Number(res.headers.get("retry-after")) || 1;
+      await new Promise((r) => setTimeout(r, Math.min(retryAfterSec * 1000, 3000)));
+      continue;
+    }
+    throw new DiscordAPIRequestError(`Failed to fetch user guilds: ${res.status}`, res.status);
+  }
+  throw new DiscordAPIRequestError("Failed to fetch user guilds: rate limited", 429);
 }
 
 const ADMINISTRATOR = BigInt(0x8);

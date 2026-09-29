@@ -5,6 +5,8 @@ import { Client } from "discord.js";
 import { getSessionMiddleware } from "./session";
 import { authRouter } from "./routes/auth";
 import { buildDashboardRouter } from "./routes/dashboard";
+import { DiscordAPIRequestError } from "./oauth";
+import { asyncHandler } from "./asyncHandler";
 import { logger } from "../logger";
 
 export function createWebServer(client: Client) {
@@ -35,10 +37,13 @@ export function createWebServer(client: Client) {
   });
 
 
-  app.get("/", (req, res) => {
-    if (req.session.user) return res.redirect("/dashboard");
-    res.render("landing");
-  });
+  app.get(
+    "/",
+    asyncHandler(async (req, res) => {
+      if (req.session.user) return res.redirect("/dashboard");
+      res.render("landing");
+    })
+  );
 
   app.use("/auth", authRouter);
   app.use("/dashboard", buildDashboardRouter(client));
@@ -48,6 +53,10 @@ export function createWebServer(client: Client) {
   });
 
   app.use((err: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    if (err instanceof DiscordAPIRequestError && err.status === 429) {
+      logger.warn({ err }, "Discord API rate limited this request");
+      return res.status(429).render("error", { message: "Discord rate-limited this request. Please wait a few seconds and try again." });
+    }
     logger.error({ err }, "Unhandled web error");
     res.status(500).render("error", { message: "Something went wrong on our end." });
   });

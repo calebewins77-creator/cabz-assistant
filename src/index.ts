@@ -9,6 +9,18 @@ import { logger } from "./logger";
 // failing over to IPv4. Prefer IPv4 results to avoid that class of hang.
 dns.setDefaultResultOrder("ipv4first");
 
+// Defense-in-depth: Node crashes the process on an unhandled rejection by
+// default. A missed .catch() anywhere (a background timer, a stray promise)
+// would otherwise take down the bot and dashboard together. Log and keep
+// running instead — the real fix for any specific case is still to handle
+// it at the source (see asyncHandler.ts for Express routes).
+process.on("unhandledRejection", (reason) => {
+  logger.error({ err: reason }, "Unhandled promise rejection");
+});
+process.on("uncaughtException", (err) => {
+  logger.error({ err }, "Uncaught exception");
+});
+
 async function main() {
   const client = createBotClient();
 

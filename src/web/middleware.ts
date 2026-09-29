@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Client } from "discord.js";
 import { canManageGuild, fetchDiscordUserGuilds } from "./oauth";
+import { asyncHandler } from "./asyncHandler";
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!req.session.user || !req.session.accessToken) {
@@ -28,7 +29,7 @@ export async function getManageableGuilds(req: Request) {
  * This is the server-side check preventing URL/param tampering across guilds.
  */
 export function requireGuildAccess(client: Client) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const guildId = req.params.guildId;
     if (!guildId) return res.status(400).send("Missing guild id");
 
@@ -43,5 +44,5 @@ export function requireGuildAccess(client: Client) {
 
     res.locals.guild = botGuild;
     next();
-  };
+  });
 }
